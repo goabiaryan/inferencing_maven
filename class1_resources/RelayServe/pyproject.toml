@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "relayserve"
+version = "1.1"
+description = "Relay: minimal LLM inference server for heterogeneous devices"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Abi Aryan" }]
+dependencies = ["PyYAML>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/goabiaryan/RelayServe"
+Repository = "https://github.com/goabiaryan/RelayServe"
+Issues = "https://github.com/goabiaryan/RelayServe/issues"
+
+[project.scripts]
+relayserve = "relayserve.cli:main"
+
+[tool.setuptools]
+packages = ["relayserve", "relayserve.internal", "relayserve.internal.config", "relayserve.internal.device", "relayserve.internal.kv", "relayserve.internal.metrics", "relayserve.internal.profile", "relayserve.internal.queue", "relayserve.internal.runner", "relayserve.internal.scheduler", "relayserve.internal.server", "relayserve.internal.shard"]
