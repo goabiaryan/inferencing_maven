@@ -73,10 +73,10 @@ It checks that the server binary exists and is executable, and that the model fi
 In a **dedicated terminal**:
 
 ```bash
-export LLAMA_SERVER_PATH=/path/to/llama-server   
-export LLAMA_MODEL_PATH=/path/to/your/model.gguf    
+export LLAMA_SERVER_PATH="<PATH_TO_CLASS1_RESOURCES>/llama_server_bin/bin/llama-server"
+export LLAMA_MODEL_PATH="<PATH_TO_CLASS1_RESOURCES>/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
 export LLAMA_PORTS=8081
-cd /path/to/class1_resources
+cd "<PATH_TO_CLASS1_RESOURCES>"
 python scripts/spawn_backends.py
 ```
 
@@ -89,7 +89,7 @@ Leave this running. You should see the server loading the model and listening on
 In a **second terminal**:
 
 ```bash
-cd /path/to/class1_resources/RelayServe
+cd "<PATH_TO_CLASS1_RESOURCES>/RelayServe"
 pip install -e .
 export RELAYSERVE_BACKENDS=http://localhost:8081
 relayserve
@@ -103,6 +103,15 @@ Relay starting
 - Backends: http://localhost:8081
 ```
 
+**If you get "Echo from mock backend"** when you curl: something else is already using port 8080 (usually the **RelayServe Demo** notebook). Do this:
+1. **Free port 8080:** Restart the Jupyter kernel or close the notebook that ran the demo, or run: `lsof -i :8080 -t | xargs kill -9`
+2. **Start RelayServe again** with the real backend. Either run the same `export` and `relayserve` as above in a **new** terminal, or use the helper script (env var is set for you):
+   ```bash
+   cd "<PATH_TO_CLASS1_RESOURCES>"
+   bash scripts/start_relay_tinyllama.sh
+   ```
+   When it starts, the log must show `Backends: http://localhost:8081`. Then curl will hit TinyLlama and you’ll get real replies, not echo.
+
 ---
 
 ## Step 5: Test the API
@@ -111,7 +120,7 @@ Responses use **pretty** format by default (readable “Relay Response” with R
 
 **Recommended – streaming script (pretty output):**
 ```bash
-cd /path/to/class1_resources
+cd "<PATH_TO_CLASS1_RESOURCES>"
 python scripts/streaming_chat.py "What is 2+2?" "class-demo"
 ```
 Prints status, headers, then the streamed reply and `[DONE]`.
@@ -120,7 +129,7 @@ Prints status, headers, then the streamed reply and `[DONE]`.
 ```bash
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Say hello in one word."}]}'
+  -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Tell me about life"}]}'
 ```
 You’ll see “Relay Response”, Reply, Device, Backend, Queue, TTFT.
 
@@ -129,15 +138,16 @@ You’ll see “Relay Response”, Reply, Device, Backend, Queue, TTFT.
 curl -i -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "X-Request-ID: demo-123" \
-  -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Hi"}]}'
+  -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Tell me about life"}]}'
 ```
+
 Check the response header `X-Request-ID: demo-123`.
 
 **Streaming (curl):**
 ```bash
 curl -N -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Count to 3."}],"stream":true}'
+  -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Tell me about life"}],"stream":true}'
 ```
 You should see `data: {...}` lines then `data: [DONE]`.
 
@@ -168,4 +178,4 @@ python scripts/streaming_chat.py "Hello" "demo"
 #   -d '{"model":"relay-gguf","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
----
+

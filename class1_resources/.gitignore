@@ -1,0 +1,5 @@
+# Downloaded GGUF models (scripts/download_model.py saves here)
+models/
+
+# Prebuilt llama-server (scripts/download_llama_server.py saves here)
+llama_server_bin/
