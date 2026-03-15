@@ -1,0 +1,13 @@
+# Local secrets — do not commit
+secrets.env
+.env
+.env.local
+*.env.local
+
+# Local server options (example files are committed)
+vllm_serve_options.txt
+sglang_serve_options.txt
+toka_serve_options.txt
+
+# Saved benchmark runs (remove this line to commit results)
+benchmark_results/
